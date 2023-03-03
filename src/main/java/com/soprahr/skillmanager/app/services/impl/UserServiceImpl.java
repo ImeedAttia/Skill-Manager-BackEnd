@@ -16,8 +16,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.soprahr.skillmanager.app.entities.DepartmentEntity;
+import com.soprahr.skillmanager.app.entities.RoleEntity;
 import com.soprahr.skillmanager.app.entities.UserEntity;
 import com.soprahr.skillmanager.app.repositories.DepartmentRepository;
+import com.soprahr.skillmanager.app.repositories.RoleRepository;
 import com.soprahr.skillmanager.app.repositories.UserRepository;
 import com.soprahr.skillmanager.app.services.UserService;
 import com.soprahr.skillmanager.app.shared.Utils;
@@ -31,6 +33,10 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	DepartmentRepository departmentRepository;
+	
+	@Autowired
+	RoleRepository roleRepository;
+	
 	@Autowired
 	Utils utils;
 	@Autowired
@@ -41,6 +47,11 @@ public class UserServiceImpl implements UserService {
 		UserEntity checkUser = userRepository.findByEmail(user.getEmail());
 		if (checkUser != null)
 			throw new RuntimeException("User Already Exists !");
+		
+		if (roleRepository.findById(user.getRole().getIdRole()) != null) {
+			throw new RuntimeException("Role Not Found !!");
+		}
+		
 		ModelMapper modelMapper = new ModelMapper();
 		UserEntity userEntity = modelMapper.map(user, UserEntity.class);
 
